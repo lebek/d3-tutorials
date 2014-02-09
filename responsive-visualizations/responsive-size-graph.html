@@ -29,6 +29,11 @@ body {
   stroke-width: 1.5px;
 }
 
+#graph {
+  width: 100%;
+  height: 100%;
+}
+
 </style>
 <body>
 
@@ -38,8 +43,8 @@ body {
 <script>
 
 var margin = 40,
-    width = 960 - margin*2,
-    height = 500 - margin*2;
+    width = parseInt(d3.select("#graph").style("width")) - margin*2,
+    height = parseInt(d3.select("#graph").style("height")) - margin*2;
 
 var xScale = d3.time.scale()
     .range([0, width]);
@@ -93,6 +98,30 @@ d3.csv("amzn.csv", function(error, data) {
       .datum(data)
       .attr("class", "line")
       .attr("d", line);
+
+  function resize() {
+    var width = parseInt(d3.select("#graph").style("width")) - margin*2,
+    height = parseInt(d3.select("#graph").style("height")) - margin*2;
+
+    xScale.range([0, width]);
+    yScale.range([height, 0]);
+
+    graph
+      .attr("width", width + margin*2)
+      .attr("height", height + margin*2)
+
+    graph.select('.x.axis')
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+    graph.select('.y.axis')
+      .call(yAxis);
+
+    graph.selectAll('.line')
+      .attr("d", line);
+  }
+
+  d3.select(window).on('resize', resize); 
 });
 
 </script>
