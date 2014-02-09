@@ -47,10 +47,12 @@ var margin = 40,
     height = parseInt(d3.select("#graph").style("height")) - margin*2;
 
 var xScale = d3.time.scale()
-    .range([0, width]);
+    .range([0, width])
+    .nice(d3.time.year);
 
 var yScale = d3.scale.linear()
-    .range([height, 0]);
+    .range([height, 0])
+    .nice();
 
 var xAxis = d3.svg.axis()
     .scale(xScale)
@@ -103,8 +105,8 @@ d3.csv("amzn.csv", function(error, data) {
     var width = parseInt(d3.select("#graph").style("width")) - margin*2,
     height = parseInt(d3.select("#graph").style("height")) - margin*2;
 
-    xScale.range([0, width]);
-    yScale.range([height, 0]);
+    xScale.range([0, width]).nice(d3.time.year);
+    yScale.range([height, 0]).nice();
 
     graph
       .attr("width", width + margin*2)
@@ -122,6 +124,8 @@ d3.csv("amzn.csv", function(error, data) {
   }
 
   d3.select(window).on('resize', resize); 
+
+  resize();
 });
 
 </script>
