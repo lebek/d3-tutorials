@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
+<style>
+
+body {
+  font-family: 'PT Sans', sans-serif;
+  font-size: 10px;
+  background-color: #F7F8F9;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #555157;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  fill: #555157;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: #4F9F49;
+  stroke-width: 1.5px;
+}
+
+</style>
+<body>
+
+<svg id="graph"></svg>
+
+<script src="http://d3js.org/d3.v3.js"></script>
+<script>
+
+var margin = 40,
+    width = 960 - margin*2,
+    height = 500 - margin*2;
+
+var xScale = d3.time.scale()
+    .range([0, width]);
+
+var yScale = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(xScale)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(yScale)
+    .orient("left");
+
+var line = d3.svg.line()
+    .x(function(d) { return xScale(d.date); })
+    .y(function(d) { return yScale(d.close); });
+
+var graph = d3.select("#graph")
+    .attr("width", width + margin*2)
+    .attr("height", height + margin*2)
+  .append("g")
+    .attr("transform", "translate(" + margin + "," + margin + ")");
+
+d3.csv("amzn.csv", function(error, data) {
+  data.forEach(function(d) {
+    d.date = d3.time.format("%Y-%m-%d").parse(d.date);
+    d.close = +d.close;
+  });
+
+  xScale.domain(d3.extent(data, function(d) { return d.date; }));
+  yScale.domain(d3.extent(data, function(d) { return d.close; }));
+
+  graph.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  graph.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Price ($)");
+
+  graph.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d", line);
+});
+
+</script>
