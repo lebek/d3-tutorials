@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/polymer/0.1.4/platform.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/polymer/0.1.4/polymer.js"></script>
+<script src="http://d3js.org/d3.v3.js"></script>
+<script src="stock-history.js"></script>
+<style>
+body { font-family: 'Helvetica', sans-serif; }
+</style>
+
+<body ng-app="d3Tutorial">
+Here's an example of a D3.js+Polymer sparkline component <stock-sparkline symbol="MSFT"></stock-sparkline> inline with text.
+
+<polymer-element name="stock-sparkline" attributes="symbol">
+  <style>
+    .inline-sparkline {
+      vertical-align: middle;
+      font-weight: bold;
+    }
+
+    #sparkline {
+      vertical-align: middle;
+    }
+
+    .line {
+      fill: none;
+      stroke: #000;
+      stroke-width: 0.5px;
+    }
+
+    .last {
+      fill: red;
+    }
+  </style>
+  <template>
+    <span class="inline-sparkline">
+      {{symbol}} <svg id="sparkline" width="{{width}}" height="{{height}}"></svg> ${{lastClose}}
+    </span>
+  </template>
+  <script>
+    function sparkline(el, data) {
+      var svg = d3.select(el)
+      var padding = 3;
+      var width = parseInt(svg.style("width")) - padding;
+      var height = parseInt(svg.style("height")) - padding;
+      var x = d3.scale.linear().range([0, width]);
+      var y = d3.scale.linear().range([height, 0]);
+      var line = d3.svg.line()
+                 .x(function(d) { return x(d.date); })
+                 .y(function(d) { return y(d.close); });
+      data.forEach(function(d) {
+        d.date = d3.time.format("%Y-%m-%d").parse(d.Date);
+        d.close = +d.Close;
+      });
+      x.domain(d3.extent(data, function(d) { return d.date; }));
+      y.domain(d3.extent(data, function(d) { return d.close; }));
+
+      svg.append('path')
+        .datum(data)
+        .attr('class', 'line')
+        .attr('d', line);
+      svg.append('circle')
+        .attr('class', 'last')
+        .attr('cy', y(data[0].close))
+        .attr('cx', width)
+        .attr('r', 2);
+    }
+
+    Polymer('stock-sparkline', {
+      width: 100,
+      height: 25,
+      months: 4,
+      ready: function() {
+        var that = this;
+        fetchStockHistory(this.symbol, this.months, function (data) {
+          console.log(data);
+          that.lastClose = +data[0].Close;
+          sparkline(that.$.sparkline, data);
+        });
+      }
+    });
+  </script>
+</polymer-element>
+</body>
