@@ -1,45 +1,12 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
-<style>
-
-body {
-  font-family: 'PT Sans', sans-serif;
-  font-size: 10px;
-  background-color: #F7F8F9;
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #555157;
-  shape-rendering: crispEdges;
-}
-
-.axis text {
-  fill: #555157;
-}
-
-.line {
-  fill: none;
-  stroke: #4F9F49;
-  stroke-width: 1.5px;
-}
-
-#graph {
-  width: 100%;
-  height: 100%;
-}
-
-</style>
+<link href='graph.css' rel='stylesheet' type='text/css'>
+<script src="http://d3js.org/d3.v3.js"></script>
 <body>
 
 <svg id="graph"></svg>
 
-<script src="http://d3js.org/d3.v3.js"></script>
 <script>
 
 var margin = 40,
@@ -108,11 +75,8 @@ d3.csv("amzn.csv", function(error, data) {
     xScale.range([0, width]).nice(d3.time.year);
     yScale.range([height, 0]).nice();
 
-    yAxis.ticks([Math.max(height/50, 2)]);
-
-    graph
-      .attr("width", width + margin*2)
-      .attr("height", height + margin*2)
+    yAxis.ticks(Math.max(height/50, 2));
+    xAxis.ticks(Math.max(width/50, 2));
 
     graph.select('.x.axis')
       .attr("transform", "translate(0," + height + ")")

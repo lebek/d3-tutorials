@@ -1,0 +1,30 @@
+body {
+  font-family: 'PT Sans', sans-serif;
+  font-size: 12px;
+  background-color: #fefefe;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #555;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  fill: #555;
+}
+
+.line {
+  fill: none;
+  stroke: #ef0d0c;
+  stroke-width: 1.5px;
+}
+
+#graph {
+  width: 100%;
+  height: 100%;
+}
